@@ -3,7 +3,7 @@
 // Frontend Logic
 // ============================================
 
-const API_BASE = window.location.origin + '/api';
+const API_BASE = "https://scriptgenie-api.onrender.com/api";
 
 // ── State ───────────────────────────────────
 let selectedTone   = 'professional';
