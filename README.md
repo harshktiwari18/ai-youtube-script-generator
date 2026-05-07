@@ -1,31 +1,51 @@
 # 🎬 ScriptGenie AI — YouTube Script Generator
 
 > **AI-powered full-stack tool that converts any topic into a complete, ready-to-record YouTube script in seconds.**
+> **Powered by Groq API + LLaMA 3 (Free & Ultra-Fast)**
 
 ---
 
 ## 📋 TABLE OF CONTENTS
 
 1. [Project Overview](#-project-overview)
-2. [Features](#-features)
-3. [Tech Stack](#-tech-stack)
-4. [Project Structure](#-project-structure)
-5. [Installation & Setup](#-installation--setup)
-6. [How to Get OpenAI API Key](#-how-to-get-openai-api-key)
-7. [API Documentation](#-api-documentation)
-8. [Frontend Guide](#-frontend-guide)
-9. [MongoDB Setup (Optional)](#-mongodb-setup-optional)
-10. [How the AI Prompt Works](#-how-the-ai-prompt-works)
-11. [Common Errors & Fixes](#-common-errors--fixes)
-12. [Project Flow Diagram](#-project-flow-diagram)
+2. [What Changed from Original](#-what-changed-from-original)
+3. [Features](#-features)
+4. [Tech Stack](#-tech-stack)
+5. [Team & Roles](#-team--roles)
+6. [Project Structure](#-project-structure)
+7. [Installation & Setup](#-installation--setup)
+8. [How to Get Groq API Key](#-how-to-get-groq-api-key)
+9. [API Documentation](#-api-documentation)
+10. [MongoDB Setup](#-mongodb-setup)
+11. [How the AI Prompt Works](#-how-the-ai-prompt-works)
+12. [Common Errors & Fixes](#-common-errors--fixes)
+13. [Project Flow Diagram](#-project-flow-diagram)
+14. [Deployment (Render)](#-deployment-render)
+15. [Future Scope](#-future-scope)
 
 ---
 
 ## 🚀 Project Overview
 
-**ScriptGenie AI** is a full-stack web application that uses the OpenAI GPT API to generate complete, professional YouTube scripts from a single topic input.
+**ScriptGenie AI** is a full-stack web application that uses the **Groq API with LLaMA 3** to generate complete, professional YouTube scripts from a single topic input.
 
 **In one line:** "Type a topic → Get a ready-to-use YouTube script (Hook + Intro + Content + CTA)"
+
+---
+
+## 🔄 What Changed from Original
+
+| Component | Before | After |
+|-----------|--------|-------|
+| **AI Provider** | OpenAI GPT-3.5-turbo | **Groq API + LLaMA 3** |
+| **API Key** | `OPENAI_API_KEY` | **`GROQ_API_KEY`** |
+| **Cost** | Paid ($0.002/script) | **FREE (14,400 req/day)** |
+| **Speed** | ~3-5 seconds | **~1-2 seconds (ultra-fast)** |
+| **Package** | `openai` npm package | **`groq-sdk` npm package** |
+| **Model** | `gpt-3.5-turbo` | **`llama3-8b-8192`** |
+| **MongoDB** | Optional (manual setup) | **Connected via Atlas** |
+| **server.js** | No DB connection | **Auto-connects MongoDB** |
+| **Port** | 5000 | **5001** |
 
 ---
 
@@ -41,7 +61,8 @@
 | 💡 **Title Suggestions** | 5 YouTube title ideas per script |
 | 🏷️ **Tags & Description** | SEO-ready video metadata |
 | 📋 **Copy & Download** | One-click copy or .txt download |
-| 💾 **Save to Library** | MongoDB-powered script library |
+| 💾 **Save to Library** | MongoDB Atlas-powered script library |
+| ⚡ **Ultra-Fast** | Groq + LLaMA 3 generates in ~1-2 seconds |
 
 ---
 
@@ -58,14 +79,30 @@
 - **Express.js** — Web framework & REST API
 - **dotenv** — Environment variable management
 - **cors** — Cross-Origin Resource Sharing
+- **mongoose** — MongoDB object modeling
 
-### AI
-- **OpenAI API** — GPT-3.5-turbo model
+### AI ⚡ (Updated)
+- **Groq API** — Ultra-fast AI inference (FREE tier)
+- **LLaMA 3 (llama3-8b-8192)** — Open-source language model
 - **Structured JSON prompting** — Returns script as parseable JSON
 
-### Database (Optional)
-- **MongoDB** — Store & retrieve scripts
+### Database
+- **MongoDB Atlas** — Cloud database (Free M0 tier)
 - **Mongoose** — MongoDB object modeling
+
+---
+
+## 👥 Team & Roles
+
+| Member | Role | Responsibilities |
+|--------|------|-----------------|
+| **Kumar Harsh** | Project Lead & Frontend Dev | UI/UX, HTML/CSS/JS, architecture, coordination |
+| **Rishav** | Backend Developer | Node.js, Express.js, API routes, server logic |
+| **Ayush Kumar** | AI Integration Engineer | Groq API, LLaMA 3, prompt engineering |
+| **Riya Tiwary** | Database Engineer | MongoDB Atlas setup, schema design, data management |
+| **Riya Kumari** | UI Designer | Visual design, color system, component styling |
+| **Dashrath Kumar Roy** | QA & Testing | Testing, bug reporting, quality assurance, docs |
+| **Nirmal Debsingha** | DevOps & Deployment | Render deployment, environment config, monitoring |
 
 ---
 
@@ -74,26 +111,27 @@
 ```
 scriptgenie/
 ├── frontend/
-│   ├── index.html          ← Main UI (single page)
-│   ├── style.css           ← Dark editorial theme
-│   └── app.js              ← Frontend logic (API calls, rendering)
+│   ├── index.html           ← Main UI (single page)
+│   ├── style.css            ← Dark editorial theme
+│   └── app.js               ← Frontend logic (API calls, rendering)
 │
 ├── backend/
-│   ├── server.js           ← Express server entry point
-│   ├── package.json        ← Dependencies
-│   ├── .env.example        ← Environment template
+│   ├── server.js            ← Express server + MongoDB connection
+│   ├── package.json         ← Dependencies (now includes groq-sdk)
+│   ├── .env                 ← Your API keys (never commit this!)
+│   ├── .env.example         ← Environment template
 │   │
 │   ├── routes/
-│   │   ├── scriptRoutes.js ← POST /api/scripts/generate
-│   │   └── savedRoutes.js  ← GET/POST/DELETE /api/saved
+│   │   ├── scriptRoutes.js  ← POST /api/scripts/generate
+│   │   └── savedRoutes.js   ← GET/POST/DELETE /api/saved
 │   │
 │   ├── controllers/
-│   │   ├── scriptController.js  ← Validates input, calls AI
-│   │   ├── openaiService.js     ← Builds prompt, calls OpenAI
+│   │   ├── scriptController.js  ← Validates input, calls Groq AI
+│   │   ├── openaiService.js     ← Builds prompt, calls Groq API ⚡
 │   │   └── savedController.js  ← MongoDB CRUD operations
 │   │
 │   └── models/
-│       └── Script.js       ← Mongoose schema for saved scripts
+│       └── Script.js        ← Mongoose schema for saved scripts
 │
 └── README.md
 ```
@@ -104,97 +142,62 @@ scriptgenie/
 
 ### Step 1 — Prerequisites
 
-Make sure you have installed:
-- **Node.js** v18 or higher → https://nodejs.org
-- **npm** (comes with Node.js)
-- **Git** (optional)
-
-Check versions:
 ```bash
 node -v    # Should show v18+
 npm -v     # Should show 9+
 ```
 
----
-
-### Step 2 — Clone / Download Project
-
-```bash
-# If using git:
-git clone <your-repo-url>
-cd scriptgenie
-
-# Or just unzip the downloaded scriptgenie.zip
-cd scriptgenie
-```
-
----
-
-### Step 3 — Install Backend Dependencies
+### Step 2 — Install Backend Dependencies
 
 ```bash
 cd backend
 npm install
 ```
 
-This installs: express, cors, dotenv, openai, mongoose, nodemon
+This installs: `express`, `cors`, `dotenv`, `groq-sdk`, `mongoose`, `nodemon`
 
----
+### Step 3 — Configure Environment Variables
 
-### Step 4 — Configure Environment Variables
+Open `backend/.env` and fill in:
 
-```bash
-# Copy the example file
-cp .env.example .env
-
-# Open .env and add your OpenAI API key
-OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxxxxxxxxx
-PORT=5000
+```env
+GROQ_API_KEY=gsk_your_groq_key_here
+MONGODB_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/scriptgenie?retryWrites=true&w=majority&appName=Cluster0
+PORT=5001
+NODE_ENV=development
 ```
 
-⚠️ **Never commit your .env file to GitHub!**
-
----
-
-### Step 5 — Start the Server
+### Step 4 — Start the Server
 
 ```bash
-# Development mode (auto-restart on file changes)
-npm run dev
-
-# OR production mode
-npm start
+node server.js
 ```
 
 You should see:
 ```
+✅ MongoDB Connected Successfully!
 🎬 ScriptGenie AI Server Running!
-📡 Port     : http://localhost:5000
-🌍 Frontend : http://localhost:5000
-⚡ API Base : http://localhost:5000/api
+📡 Port     : http://localhost:5001
+🌍 Frontend : http://localhost:5001
+⚡ API Base : http://localhost:5001/api
 ```
 
----
+### Step 5 — Open in Browser
 
-### Step 6 — Open in Browser
-
-Go to: **http://localhost:5000**
-
-The Express server serves your frontend files from the `/frontend` folder automatically.
+Go to: **http://localhost:5001**
 
 ---
 
-## 🔑 How to Get OpenAI API Key
+## 🔑 How to Get Groq API Key (FREE)
 
-1. Go to **https://platform.openai.com**
-2. Sign up / Log in
-3. Click your profile → **API Keys**
-4. Click **"Create new secret key"**
-5. Copy the key (starts with `sk-`)
-6. Paste it in `backend/.env` as `OPENAI_API_KEY=sk-...`
+1. Go to **https://console.groq.com**
+2. Sign up with Google or email (no credit card!)
+3. Click **"API Keys"** in the left sidebar
+4. Click **"Create API Key"**
+5. Copy the key (starts with `gsk_`)
+6. Paste it in `backend/.env` as `GROQ_API_KEY=gsk_...`
 
-> ⚠️ OpenAI API is paid. You get $5 free credit on new accounts.
-> GPT-3.5-turbo costs ~$0.002 per script generation.
+> ✅ Groq free tier: **14,400 requests/day** — more than enough for demos!
 
 ---
 
@@ -202,13 +205,11 @@ The Express server serves your frontend files from the `/frontend` folder automa
 
 ### Base URL
 ```
-http://localhost:5000/api
+http://localhost:5001/api
 ```
 
----
-
 ### POST `/api/scripts/generate`
-Generate a YouTube script using AI.
+Generate a YouTube script using Groq AI.
 
 **Request Body:**
 ```json
@@ -226,7 +227,7 @@ Generate a YouTube script using AI.
 | topic | string | ✅ Yes | Any text (3-200 chars) |
 | tone | string | No | professional, funny, storytelling, motivational, educational, casual |
 | length | string | No | shorts, medium, long |
-| audience | string | No | beginners, intermediate, advanced, general, students, entrepreneurs |
+| audience | string | No | beginners, intermediate, advanced, students |
 
 **Success Response (200):**
 ```json
@@ -236,11 +237,10 @@ Generate a YouTube script using AI.
     "hook": "What if I told you...",
     "intro": "Hey everyone! Welcome back...",
     "mainContent": [
-      { "section": "Why Python?", "content": "Python is..." },
-      { "section": "Day 1-10: Basics", "content": "Start with..." }
+      { "section": "Why Python?", "content": "Python is..." }
     ],
     "cta": "If this helped you...",
-    "title": "1. How to Learn Python...\n2. Python for Beginners...",
+    "title": "1. How to Learn Python...",
     "tags": ["python", "programming", "beginners"],
     "description": "In this video...",
     "topic": "How to learn Python in 30 days",
@@ -252,116 +252,26 @@ Generate a YouTube script using AI.
 }
 ```
 
-**Error Response (400/500):**
-```json
-{
-  "success": false,
-  "error": "Topic is required (minimum 3 characters)."
-}
-```
+### GET `/api/saved` — Get all saved scripts
+### POST `/api/saved` — Save a script to MongoDB
+### DELETE `/api/saved/:id` — Delete a saved script
+### GET `/api/health` — Server health check
 
 ---
 
-### GET `/api/saved`
-Get all saved scripts from MongoDB.
+## 🗄️ MongoDB Setup
 
-**Response:**
-```json
-{
-  "success": true,
-  "data": [ ...array of saved scripts... ]
-}
-```
+### MongoDB Atlas (Cloud, Free M0)
 
----
+1. Go to **https://mongodb.com/atlas** → Sign up free
+2. Create cluster → Select **M0 FREE** → Region: **Mumbai (ap-south-1)**
+3. Create database user (save password!)
+4. Network Access → Allow from Anywhere (`0.0.0.0/0`)
+5. Connect → Drivers → Node.js → Copy connection string
+6. Replace `<password>` + add `/scriptgenie` as DB name:
 
-### POST `/api/saved`
-Save a generated script to MongoDB.
-
-**Request Body:** Full script object from `/generate` response.
-
----
-
-### DELETE `/api/saved/:id`
-Delete a saved script by MongoDB ID.
-
----
-
-### GET `/api/health`
-Check if server is running.
-
-```json
-{
-  "status": "OK",
-  "message": "ScriptGenie AI Server is running!",
-  "timestamp": "2024-01-01T00:00:00.000Z"
-}
-```
-
----
-
-## 🎨 Frontend Guide
-
-### Files:
-- **index.html** — All UI sections: Header, Hero, Generator, How It Works, Saved Scripts, Footer
-- **style.css** — Dark theme with CSS variables. Customize `:root` variables for colors
-- **app.js** — All JavaScript: API calls, rendering, copy/download, tabs
-
-### Key Functions in app.js:
-
-```javascript
-generateScript()   // Called on button click — sends API request
-renderScript(data) // Renders the result HTML into the output panel
-switchTab(tab)     // Switches between Script / Meta / Titles tabs
-copyAll()          // Copies entire script to clipboard
-downloadScript()   // Downloads script as .txt file
-saveScript()       // Saves to MongoDB via API
-loadSavedScripts() // Loads saved scripts from MongoDB on page load
-```
-
-### Customizing Colors:
-Edit these variables in `style.css`:
-```css
-:root {
-  --red:    #ff3b30;  /* Primary accent */
-  --orange: #ff6b35;  /* Secondary accent */
-  --bg:     #0a0a0b;  /* Background */
-  --bg3:    #18181d;  /* Card background */
-}
-```
-
----
-
-## 🗄️ MongoDB Setup (Optional)
-
-MongoDB is optional. The app works without it (just can't save scripts).
-
-### Option A — MongoDB Atlas (Cloud, Free)
-
-1. Go to **https://mongodb.com/atlas**
-2. Create free account
-3. Create a free M0 cluster
-4. Get your connection string:
-   `mongodb+srv://username:password@cluster.mongodb.net/scriptgenie`
-5. Add to `.env`:
-   ```
-   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/scriptgenie
-   ```
-
-### Option B — Local MongoDB
-
-1. Install MongoDB Community: https://www.mongodb.com/try/download/community
-2. Start MongoDB: `mongod`
-3. In `.env`: `MONGODB_URI=mongodb://localhost:27017/scriptgenie`
-
-### Enable MongoDB in server.js
-
-Uncomment these lines in `server.js`:
-```javascript
-const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ MongoDB Connected'))
-  .catch(err => console.error('❌ MongoDB Error:', err));
+```env
+MONGODB_URI=mongodb+srv://yourUser:yourPass@cluster0.xxxxx.mongodb.net/scriptgenie?retryWrites=true&w=majority&appName=Cluster0
 ```
 
 ---
@@ -390,9 +300,9 @@ Generate the script in JSON format:
 }
 ```
 
-**Why JSON output?** So the frontend can parse and render each section separately (Hook, Intro, CTA, etc.) with different colors and styling.
-
-**Temperature: 0.8** — High enough for creativity, low enough for structure.
+**Model:** `llama3-8b-8192` via Groq API
+**Temperature:** `0.8` — Creative but structured
+**Max Tokens:** `2000`
 
 ---
 
@@ -400,12 +310,12 @@ Generate the script in JSON format:
 
 | Error | Cause | Fix |
 |-------|-------|-----|
-| `Invalid OpenAI API key` | Wrong key in .env | Get new key from platform.openai.com |
-| `OpenAI quota exceeded` | No billing set up | Add payment at platform.openai.com/billing |
-| `Rate limit reached` | Too many requests | Wait 1 minute and retry |
-| `Cannot find module 'express'` | npm install not run | Run `cd backend && npm install` |
-| `Port 5000 already in use` | Another app using port | Change PORT in .env to 3000 or 8000 |
-| `MongoDB not connected` | No MongoDB URI | Script saving is disabled, generation still works |
+| `Invalid Groq API key` | Wrong key in .env | Get new key from console.groq.com |
+| `Rate limit reached` | Too many requests | Wait 1 min — 14,400/day free limit |
+| `Cannot find module 'groq-sdk'` | Package not installed | Run `npm install groq-sdk` |
+| `MongoDB not connected` | Wrong URI or password | Check .env MONGODB_URI |
+| `Port 5001 already in use` | Port taken | Change PORT in .env |
+| `Generation Failed` | API key missing in .env | Add GROQ_API_KEY to backend/.env |
 
 ---
 
@@ -422,13 +332,13 @@ Frontend (app.js)
       ▼
 Backend (scriptController.js)
   - Validates topic length
-  - Checks API key exists
+  - Checks GROQ_API_KEY exists
       │
       ▼
-openaiService.js
+openaiService.js  ⚡ (Groq + LLaMA 3)
   - Builds structured prompt
-  - Calls OpenAI GPT-3.5-turbo
-  - Receives JSON response
+  - Calls Groq API (llama3-8b-8192)
+  - Receives JSON response in ~1-2 seconds
   - Parses and returns
       │
       ▼
@@ -441,21 +351,50 @@ Frontend (renderScript)
 User Actions
   - Copy All → Clipboard
   - Download → .txt file
-  - Save → MongoDB
+  - Save → MongoDB Atlas
 ```
 
 ---
 
-## 🎯 Next Level Features to Add
+## 🚀 Deployment (Render)
 
-- [ ] **User Authentication** — Login with Google/Email
-- [ ] **Script History** — Per-user script library
-- [ ] **Export to PDF** — Download as formatted PDF
-- [ ] **Export to Google Docs** — One-click to Google Drive
-- [ ] **Thumbnail Ideas** — AI generates thumbnail concepts
-- [ ] **SEO Score** — Rate the script for YouTube SEO
-- [ ] **Multi-language** — Generate scripts in Hindi, Spanish, etc.
-- [ ] **Voice Preview** — Text-to-Speech demo of the script
+1. Push to GitHub:
+```bash
+git init && git add . && git commit -m "ScriptGenie AI"
+git remote add origin https://github.com/yourusername/scriptgenie.git
+git push -u origin main
+```
+
+2. Go to **render.com** → New → Web Service → Connect GitHub repo
+
+3. Settings:
+```
+Root Dir  : backend
+Build Cmd : npm install
+Start Cmd : node server.js
+```
+
+4. Add Environment Variables on Render:
+```
+GROQ_API_KEY  = gsk_your_key
+MONGODB_URI   = mongodb+srv://...
+PORT          = 5001
+```
+
+5. Deploy → Live at `https://scriptgenie-ai.onrender.com` 🎉
+
+---
+
+## 🎯 Future Scope
+
+| Version | Feature |
+|---------|---------|
+| v2.0 | 🎙️ AI Voice Generation — Script to voiceover audio |
+| v2.1 | 🌍 Multi-Language Support — 20+ languages |
+| v2.2 | 🖼️ Thumbnail Generator — AI thumbnail creation |
+| v3.0 | 📈 Video SEO Optimizer — Auto titles & tags |
+| v3.1 | 📊 Analytics Dashboard — Script performance tracking |
+| v3.2 | 🔗 Social Media Export — Twitter, Instagram, TikTok |
 
 ---
 
@@ -464,14 +403,14 @@ User Actions
 ```json
 {
   "dependencies": {
-    "express":   "^4.19.2",   // Web server & routing
-    "cors":      "^2.8.5",    // Allow frontend to call backend
-    "dotenv":    "^16.4.5",   // Load .env variables
-    "openai":    "^4.52.7",   // OpenAI GPT API client
-    "mongoose":  "^8.4.0"     // MongoDB object modeling
+    "express":    "^4.19.2",
+    "cors":       "^2.8.5",
+    "dotenv":     "^16.4.5",
+    "groq-sdk":   "^0.9.0",
+    "mongoose":   "^8.4.0"
   },
   "devDependencies": {
-    "nodemon":   "^3.1.4"     // Auto-restart on code changes
+    "nodemon":    "^3.1.4"
   }
 }
 ```
@@ -480,11 +419,11 @@ User Actions
 
 ## 👨‍💻 Built With
 
-- **ScriptGenie AI** by SCRIPTGENIE AI
-- Powered by **OpenAI GPT-3.5-turbo**
+- **ScriptGenie AI** by Team SCRIPTGENIE AI
+- Powered by **Groq API + LLaMA 3 (llama3-8b-8192)**
 - Backend: **Node.js + Express**
 - Frontend: **HTML + CSS + Vanilla JS**
-- Database: **MongoDB + Mongoose**
+- Database: **MongoDB Atlas**
 
 ---
 
